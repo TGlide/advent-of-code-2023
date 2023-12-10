@@ -1,3 +1,6 @@
+import { isNumber } from "./helpers/isNumber";
+import { readlines } from "./helpers/readlines";
+
 // Helpers
 const numberWords = [
   "one",
@@ -21,18 +24,12 @@ function extractNumFromText(text: string): number | null {
   return null;
 }
 
-function isNumber(s: string): boolean {
-  return !Number.isNaN(Number(s));
-}
-
 function sum(arr: number[]): number {
   return arr.reduce((acc, curr) => acc + curr, 0);
 }
 
 // Main
-const inputFile = Bun.file("./1/inputs/input.txt");
-const input = await inputFile.text();
-const lines = input.split("\n");
+const lines = await readlines("./inputs/1.txt");
 
 function partOne() {
   const numbers = [] as number[];

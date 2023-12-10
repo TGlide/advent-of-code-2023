@@ -9,53 +9,37 @@ end
 
 def sum(arr : Array(Int32)) : Int32
   res = 0
-
-  i = 0
-  until i >= arr.size
-    res += arr[i]
-    i += 1
+  arr.each do |v|
+    res += v
   end
-
   return res
 end
 
 def partOne(input : String) : Int32
   lines = input.split("\n")
-
   numbers = [] of Int32
 
-  i = 0
-  until i == lines.size
-    line = lines[i]
+  lines.each do |line|
     first = nil
     last = nil
 
-    j = 0
-    until j == line.size
-      char = line[j]
-
+    line.each_char do |char|
       if integer? char
         if !first
           first = char
         end
         last = char
       end
-
-      j += 1
     end
 
-    if first.is_a? Char && last.is_a? Char
-      num = "#{first}#{last}"
-      numbers << Int32.new(num)
-    end
-
-    i += 1
+    num = "#{first}#{last}"
+    numbers << Int32.new(num)
   end
 
   return sum numbers
 end
 
-puts "Part one:", partOne File.read("./1/inputs/input.txt")
+puts "Part one:", partOne File.read("./inputs/1.txt")
 
 def extractNumFromText(text : String) : Int32 | Nil
   numberWords = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine"]
@@ -76,16 +60,12 @@ def partTwo(input : String) : Int32
 
   numbers = [] of Int32
 
-  i = 0
   lines.each do |line|
-    line = lines[i]
     first = nil
     last = nil
     textSoFar = ""
 
-    j = 0
-    until j == line.size
-      char = line[j]
+    line.each_char do |char|
       textSoFar += char
 
       if extractNumFromText(textSoFar)
@@ -100,17 +80,13 @@ def partTwo(input : String) : Int32
         end
         last = char
       end
-
-      j += 1
     end
 
     num = "#{first}#{last}"
     numbers << Int32.new(num)
-
-    i += 1
   end
 
   return sum numbers
 end
 
-puts "Part two:", partTwo File.read("./1/inputs/input.txt")
+puts "Part two:", partTwo File.read("./inputs/1.txt")

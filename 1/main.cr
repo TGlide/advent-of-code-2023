@@ -55,7 +55,7 @@ def partOne(input : String) : Int32
   return sum numbers
 end
 
-p! partOne File.read("./1/input.txt")
+puts "Part one:", partOne File.read("./1/inputs/input.txt")
 
 def extractNumFromText(text : String) : Int32 | Nil
   numberWords = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine"]
@@ -113,4 +113,4 @@ def partTwo(input : String) : Int32
   return sum numbers
 end
 
-p! partTwo File.read("./1/input.txt")
+puts "Part two:", partTwo File.read("./1/inputs/input.txt")

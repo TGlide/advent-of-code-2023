@@ -30,7 +30,7 @@ function sum(arr: number[]): number {
 }
 
 // Main
-const inputFile = Bun.file("./1/input.txt");
+const inputFile = Bun.file("./1/inputs/input.txt");
 const input = await inputFile.text();
 const lines = input.split("\n");
 

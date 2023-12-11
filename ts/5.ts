@@ -2,8 +2,8 @@ import { createLog } from "./helpers/createLog";
 import { readlines } from "./helpers/readlines";
 
 // Initialize
-const log = createLog(true);
-const lines = await readlines("./inputs/5-ex.txt");
+const log = createLog(false);
+const lines = await readlines("./inputs/5.txt");
 
 // Helpers
 type TMap = {
@@ -47,11 +47,87 @@ function getMaps() {
 
 // Execute
 function partOne() {
-  const seeds = lines[0].split(":")[1].trim().split(/\s+/g);
+  const seeds = lines[0].split(":")[1].trim().split(/\s+/g).map(Number);
   log("Seeds:", seeds);
 
   const maps = getMaps();
   log("Maps", maps);
+
+  const locations: number[] = [];
+  seeds.forEach((seed) => {
+    let currLabel = "seed";
+    let currValue = seed;
+
+    while (currLabel !== "location") {
+      const map = maps.find((map) => map.from === currLabel);
+      if (!map) throw new Error("all is doomed");
+
+      for (const sm of map.subMaps) {
+        if (
+          currValue >= sm.sourceStart &&
+          currValue < sm.sourceStart + sm.range
+        ) {
+          currValue = sm.destStart + (currValue - sm.sourceStart);
+          break;
+        }
+      }
+
+      currLabel = map.to;
+    }
+
+    locations.push(currValue);
+  });
+
+  log("Locations", locations);
+  log();
+  console.log("Part one:", Math.min(...locations));
+  log();
+}
+
+function partTwo() {
+  const seedRanges = lines[0].split(":")[1].trim().split(/\s+/g).map(Number);
+  log("Seed ranges:", seedRanges);
+
+  const seeds = [] as number[];
+  for (let i = 0; i < seedRanges.length; i += 2) {
+    const [start, range] = seedRanges.slice(i);
+    seeds.push(...[...Array(range)].map((_, i) => start + i));
+  }
+
+  log("Seeds:", seeds);
+
+  const maps = getMaps();
+  log("Maps", maps);
+
+  const locations: number[] = [];
+  seeds.forEach((seed) => {
+    let currLabel = "seed";
+    let currValue = seed;
+
+    while (currLabel !== "location") {
+      const map = maps.find((map) => map.from === currLabel);
+      if (!map) throw new Error("all is doomed");
+
+      for (const sm of map.subMaps) {
+        if (
+          currValue >= sm.sourceStart &&
+          currValue < sm.sourceStart + sm.range
+        ) {
+          currValue = sm.destStart + (currValue - sm.sourceStart);
+          break;
+        }
+      }
+
+      currLabel = map.to;
+    }
+
+    locations.push(currValue);
+  });
+
+  log("Locations", locations);
+  log();
+  console.log("Part two:", Math.min(...locations));
 }
 
 partOne();
+partTwo();

@@ -3,7 +3,6 @@ import { isNumeric } from "./helpers/isNumeric";
 import { readlines } from "./helpers/readlines";
 
 const log = createLog(true);
-
 const lines = await readlines("./inputs/3.txt");
 const matrix = lines.map((l) => l.split(""));
 

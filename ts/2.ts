@@ -1,4 +1,4 @@
-import { isNumber } from "./helpers/isNumber";
+import { isNumeric } from "./helpers/isNumeric";
 import { readlines } from "./helpers/readlines";
 
 type Game = {
@@ -12,7 +12,7 @@ function parseGame(game: string): Game {
   const match = game.match(/Game (\d+):/);
   const id = match?.[1];
 
-  if (!isNumber(id)) throw Error("Unexpected game input");
+  if (!isNumeric(id)) throw Error("Unexpected game input");
 
   const pickings = game.substring(match?.[0].length ?? 0).split(";");
   const cubes = {} as Game["cubes"];

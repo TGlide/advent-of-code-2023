@@ -1,4 +1,4 @@
-import { isNumber } from "./helpers/isNumber";
+import { isNumeric } from "./helpers/isNumeric";
 import { readlines } from "./helpers/readlines";
 
 // Helpers
@@ -39,7 +39,7 @@ function partOne() {
     let last: string | null = null;
 
     line.split("").forEach((char) => {
-      if (isNumber(char)) {
+      if (isNumeric(char)) {
         if (first === null) {
           first = char;
         }
@@ -74,7 +74,7 @@ function partTwo() {
         }
         last = `${num}`;
         textSoFar = "";
-      } else if (isNumber(char)) {
+      } else if (isNumeric(char)) {
         if (first === null) {
           first = char;
         }

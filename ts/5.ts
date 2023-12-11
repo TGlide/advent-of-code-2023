@@ -2,7 +2,7 @@ import { createLog } from "./helpers/createLog";
 import { readlines } from "./helpers/readlines";
 
 // Initialize
-const log = createLog(false);
+const log = createLog(true);
 const lines = await readlines("./inputs/5.txt");
 
 // Helpers
@@ -53,7 +53,7 @@ function partOne() {
   const maps = getMaps();
   log("Maps", maps);
 
-  const locations: number[] = [];
+  let loc = -1;
   seeds.forEach((seed) => {
     let currLabel = "seed";
     let currValue = seed;
@@ -75,58 +75,57 @@ function partOne() {
       currLabel = map.to;
     }
 
-    locations.push(currValue);
+    if (loc === -1 || currValue < loc) loc = currValue;
   });
 
-  log("Locations", locations);
   log();
-  console.log("Part one:", Math.min(...locations));
+  console.log("Part one:", loc);
   log();
 }
 
 function partTwo() {
   const seedRanges = lines[0].split(":")[1].trim().split(/\s+/g).map(Number);
   log("Seed ranges:", seedRanges);
-
-  const seeds = [] as number[];
-  for (let i = 0; i < seedRanges.length; i += 2) {
-    const [start, range] = seedRanges.slice(i);
-    seeds.push(...[...Array(range)].map((_, i) => start + i));
-  }
-
-  log("Seeds:", seeds);
+  log(`${seedRanges.length / 2} total ranges`);
 
   const maps = getMaps();
-  log("Maps", maps);
+  // log("Maps", maps);
 
-  const locations: number[] = [];
-  seeds.forEach((seed) => {
-    let currLabel = "seed";
-    let currValue = seed;
+  let loc = -1;
+  let t = performance.now();
 
-    while (currLabel !== "location") {
-      const map = maps.find((map) => map.from === currLabel);
-      if (!map) throw new Error("all is doomed");
+  for (let i = 0; i < seedRanges.length; i += 2) {
+    const [start, range] = seedRanges.slice(i);
+    t = performance.now();
+    log("Analyzing range:", start, range);
+    for (let seed = start; seed < start + range; seed++) {
+      let currLabel = "seed";
+      let currValue = seed;
 
-      for (const sm of map.subMaps) {
-        if (
-          currValue >= sm.sourceStart &&
-          currValue < sm.sourceStart + sm.range
-        ) {
-          currValue = sm.destStart + (currValue - sm.sourceStart);
-          break;
+      while (currLabel !== "location") {
+        const map = maps.find((map) => map.from === currLabel);
+        if (!map) throw new Error("all is doomed");
+
+        for (const sm of map.subMaps) {
+          if (
+            currValue >= sm.sourceStart &&
+            currValue < sm.sourceStart + sm.range
+          ) {
+            currValue = sm.destStart + (currValue - sm.sourceStart);
+            break;
+          }
         }
+
+        currLabel = map.to;
       }
 
-      currLabel = map.to;
+      if (loc === -1 || currValue < loc) loc = currValue;
     }
+    log("  Took", (performance.now() - t) / 1000, "seconds");
+  }
 
-    locations.push(currValue);
-  });
-
-  log("Locations", locations);
   log();
-  console.log("Part two:", Math.min(...locations));
+  console.log("Part two:", loc);
 }
 
 partOne();

@@ -1,7 +1,7 @@
 import { createLog } from "./helpers/createLog";
 import { readlines } from "./helpers/readlines";
 
-const log = createLog(true);
+const log = createLog(false);
 const lines = await readlines("./inputs/4.txt");
 
 let points = 0;
@@ -28,8 +28,20 @@ log();
 
 let totalScratchboards = lines.length;
 const scratchboards: number[] = lines.map((_, i) => i);
+
+const cachedToCopy: {
+  [scratch_index: number]: number[];
+} = {};
+
 while (scratchboards.length) {
   const i = scratchboards.shift() as number;
+  if (cachedToCopy[i]) {
+    scratchboards.push(...cachedToCopy[i]);
+    totalScratchboards += cachedToCopy[i].length;
+    // log(`Game ${i + 1}:`, cachedToCopy[i], "scratchcards to copy (cached)");
+    continue;
+  }
+
   const line = lines[i];
 
   const [, numbers] = line.split(":");
@@ -44,10 +56,12 @@ while (scratchboards.length) {
     const prev = acc.at(-1) ?? i;
     return [...acc, prev + 1];
   }, [] as number[]);
-  // log(`Game ${i + 1}:`, toCopy, "scratchcards to copy");
+  log(`Game ${i + 1}:`, toCopy, "scratchcards to copy");
   scratchboards.push(...toCopy);
   totalScratchboards += toCopy.length;
+
+  cachedToCopy[i] = toCopy;
 }
 
-log();
+log("Skipping logs of cached games...\n");
 console.log("Part two:", totalScratchboards);

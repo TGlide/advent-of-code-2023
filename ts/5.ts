@@ -3,7 +3,7 @@ import { readlines } from "./helpers/readlines";
 
 // Initialize
 const log = createLog(true);
-const lines = await readlines("./inputs/5.txt");
+const lines = await readlines("./inputs/5-ex.txt");
 
 // Helpers
 type TMap = {
@@ -83,10 +83,18 @@ function partOne() {
   log();
 }
 
+type SeedRange = [number, number];
+
 function partTwo() {
-  const seedRanges = lines[0].split(":")[1].trim().split(/\s+/g).map(Number);
+  const nums = lines[0].split(":")[1].trim().split(/\s+/g).map(Number);
+  const seedRanges: SeedRange[] = [];
+  for (let i = 0; i < nums.length; i += 2) {
+    const [start, range] = nums.slice(i);
+    seedRanges.push([start, start + range - 1]);
+  }
+
   log("Seed ranges:", seedRanges);
-  log(`${seedRanges.length / 2} total ranges`);
+  log(`${seedRanges.length} total ranges`);
 
   const maps = getMaps();
   // log("Maps", maps);
@@ -94,35 +102,32 @@ function partTwo() {
   let loc = -1;
   let t = performance.now();
 
-  for (let i = 0; i < seedRanges.length; i += 2) {
-    const [start, range] = seedRanges.slice(i);
+  seedRanges.forEach((seedRange) => {
     t = performance.now();
-    log("Analyzing range:", start, range);
-    for (let seed = start; seed < start + range; seed++) {
-      let currLabel = "seed";
-      let currValue = seed;
+    log("Analyzing range:", seedRange);
 
-      while (currLabel !== "location") {
-        const map = maps.find((map) => map.from === currLabel);
-        if (!map) throw new Error("all is doomed");
+    let currLabel = "seed";
+    let ranges: [number, number][] = [seedRange];
 
+    while (currLabel !== "location") {
+      const map = maps.find((map) => map.from === currLabel);
+      if (!map) throw new Error("all is doomed");
+
+      const newRanges: typeof ranges = [];
+      for (const range of ranges) {
+        const remaining: SeedRange = seedRange;
         for (const sm of map.subMaps) {
-          if (
-            currValue >= sm.sourceStart &&
-            currValue < sm.sourceStart + sm.range
-          ) {
-            currValue = sm.destStart + (currValue - sm.sourceStart);
-            break;
-          }
         }
-
-        currLabel = map.to;
+        newRanges.push(remaining);
       }
 
-      if (loc === -1 || currValue < loc) loc = currValue;
+      currLabel = map.to;
     }
+
+    // if (loc === -1 || currValue < loc) loc = currValue;
+
     log("  Took", (performance.now() - t) / 1000, "seconds");
-  }
+  });
 
   log();
   console.log("Part two:", loc);

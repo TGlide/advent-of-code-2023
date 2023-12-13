@@ -8,7 +8,7 @@ const handsAndBids = lines
   .map((line) => line.split(/\s+/g))
   .map((l) => ({
     hand: l[0],
-    bid: Number(l[1]),
+    bid: BigInt(l[1]),
   }));
 
 // prettier-ignore
@@ -28,41 +28,47 @@ function getHandRank(hand: string) {
     log("Card", card, "at position", i + 1, "has value", value);
     return acc + value;
   }, 0);
-  log(cardsRank);
+  // log(cardsRank);
 
   if (uniqueCards.size === 1) {
     log(`Hand ${hand} is five of a kind`);
-    return 10 ** 16 + cardsRank;
+    return 10 ** 23 + cardsRank;
   } else if (uniqueCards.size === 2 && cards.some((c) => qty(c, cards) === 4)) {
     log(`Hand ${hand} is four of a kind`);
-    return 10 ** 15 + cardsRank;
+    return 10 ** 21 + cardsRank;
   } else if (uniqueCards.size === 2) {
     log(`Hand ${hand} is a full house`);
-    return 10 ** 14 + cardsRank;
+    return 10 ** 19 + cardsRank;
   } else if (uniqueCards.size === 3 && cards.some((c) => qty(c, cards) === 3)) {
     log(`Hand ${hand} is three of a kind`);
-    return 10 ** 13 + cardsRank;
+    return 10 ** 17 + cardsRank;
   } else if (uniqueCards.size === 3) {
     log(`Hand ${hand} is a two pair`);
-    return 10 ** 12 + cardsRank;
+    return 10 ** 15 + cardsRank;
   } else if (uniqueCards.size === 4) {
     log(`Hand ${hand} is a one pair`);
-    return 10 ** 11 + cardsRank;
+    return 10 ** 13 + cardsRank;
   } else {
     log(`Hand ${hand} is a high card`);
-    return 10 ** 10 + cardsRank;
+    return 10 ** 11 + cardsRank;
   }
 }
 
-const sorted = handsAndBids.sort((a, b) => {
-  return getHandRank(a.hand) - getHandRank(b.hand);
+const withRank = handsAndBids.map((hb) => ({
+  ...hb,
+  rank: getHandRank(hb.hand),
+}));
+
+const sorted = withRank.toSorted((a, b) => {
+  return a.rank - b.rank;
 });
 
-let total = 0;
+let total = BigInt(0);
 sorted.forEach((hb, i) => {
-  const multiplier = i + 1;
+  const multiplier = BigInt(i + 1);
   total += hb.bid * multiplier;
+  log(hb, hb.bid * multiplier, total);
 });
-log(sorted.slice(-100).map((h) => h.hand));
+// log(sorted);
 
-console.log("Part one:", total);
+console.log("Part one:", total); // should be 250232501

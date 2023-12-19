@@ -1,4 +1,4 @@
-file = open("./inputs/11-ex.txt", "r")
+file = open("./inputs/11.txt", "r")
 lines = file.readlines()
 file.close()
 
@@ -25,10 +25,10 @@ def expand(matrix):
   transposed = transpose(matrix)
 
   empty_rows = [i for i in range(len(matrix)) if is_empty_row(matrix[i])]
-  print(empty_rows)
+  # print(empty_rows)
 
   empty_cols  = [i for i in range(len(transposed)) if is_empty_row(transposed[i])]
-  print(empty_cols)
+  # print(empty_cols)
 
   m = matrix[:]
   i = 0;
@@ -58,11 +58,22 @@ def expand(matrix):
 
   return m
 
+def steps_between(p1, p2):
+  return abs(p1[0] - p2[0]) + abs(p1[1] - p2[1])
+
 matrix = [[c for c in l.strip()] for l in lines]
-print_matrix(matrix)
+# print_matrix(matrix)
 
 expanded = expand(matrix)
-print_matrix(expanded)
+# print_matrix(expanded)
+
+points = [(x, y) for y in range(len(expanded)) for x in range(len(expanded[y])) if expanded[y][x] == '#']
+pairs = [(points[i], points[j]) for i in range(len(points)) for j in range(i+1, len(points))]
+
+# for p in pairs: 
+#   print(p, steps_between(p[0], p[1]))
+
+print("Part 1:", sum([steps_between(p[0], p[1]) for p in pairs]))
 
 
 

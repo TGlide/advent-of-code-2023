@@ -1,9 +1,6 @@
-import { createLog } from "./helpers/createLog";
 import { readlines } from "./helpers/readlines";
 
-const log = createLog(true);
 const lines = await readlines("./inputs/9.txt");
-
 const histories = lines.map((line) => line.split(" ").map((x) => Number(x)));
 
 function extrapolate_last(history: number[]): number {

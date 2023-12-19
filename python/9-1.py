@@ -3,8 +3,6 @@ lines = file.readlines()
 file.close()
 
 histories = [[int(x) for x in line.split(' ')] for line in lines]
-# print(histories)
-
 
 def extrapolate_last(history):
   dif = []
